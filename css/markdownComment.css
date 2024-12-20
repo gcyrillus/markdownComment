@@ -1,0 +1,191 @@
+/**
+	* Plugin 			markdownComment
+	*
+	* @CMS required			PluXml 
+	*
+	* @version			2.0.0
+	* @date				11/12/2024
+	* @author 			G.Cyrille
+	░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+	░       ░░  ░░░░░░░  ░░░░  ░  ░░░░  ░░      ░░       ░░░      ░░  ░░░░░░░        ░░      ░░░░░   ░░░  ░        ░        ░
+	▒  ▒▒▒▒  ▒  ▒▒▒▒▒▒▒  ▒▒▒▒  ▒▒  ▒▒  ▒▒  ▒▒▒▒  ▒  ▒▒▒▒  ▒  ▒▒▒▒  ▒  ▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒  ▒▒▒▒▒▒▒▒▒▒    ▒▒  ▒  ▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒
+	▓       ▓▓  ▓▓▓▓▓▓▓  ▓▓▓▓  ▓▓▓    ▓▓▓  ▓▓▓▓  ▓       ▓▓  ▓▓▓▓  ▓  ▓▓▓▓▓▓▓▓▓▓  ▓▓▓▓▓      ▓▓▓▓▓  ▓  ▓  ▓      ▓▓▓▓▓▓  ▓▓▓▓
+	█  ███████  ███████  ████  ██  ██  ██  ████  █  ███████  ████  █  ██████████  ██████████  ████  ██    █  ██████████  ████
+	█  ███████        ██      ██  ████  ██      ██  ████████      ██        █        ██      ██  █  ███   █        ████  ████
+	█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+**/
+
+
+#editor{
+    position:relative;
+    z-index:1001;
+}
+
+#markdown-editor {
+  width: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  position: relative;
+  filter: drop-shadow(10px 10px 5px);
+  padding-bottom: 2rem;
+  resize: vertical;
+  overflow-y: auto;
+  scrollbar-width: auto;
+}
+.distraction-free #markdown-editor {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+  top: 0;
+  right: 0;
+}
+
+#toolbar {
+  color:silver;
+  background: #222;
+  border-radius: 10px 10px 0 0;
+  border: solid 1px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+#toolbar input {
+  display: none;
+}
+#toolbar hr {
+  margin: 0 -0.05rem;
+  height: 1.5rem;
+}
+
+i,
+label {
+  margin: auto 0;
+}
+#toolbar > :is(:nth-last-child(1), :nth-last-child(4)) {
+  margin-inline: 0.55em;
+  color: hotpink;
+  font-weight: bolder;
+}
+#toolbar > :nth-last-child(2) {
+  margin-inline-start: auto;
+  margin-inline-end: -0.55em;
+}
+#in-out-put {
+  border-top: none;
+  border: solid 1px silver;
+  border-radius: 0 0 10px 10px;
+  position: relative;
+  display: grid;
+  overflow: hidden;
+}
+#in-out-put > * {
+  border-radius: 0 0 10px 10px;
+  grid-row: 1;
+  grid-column: 1;
+  background: white;
+  position: relative;
+}
+#html-preview {
+  height: 100%;
+  min-height: 250px;
+  max-height: 80vh;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
+#toolbar i {
+  cursor: pointer;
+}
+#toolbar i:hover {
+  color:white
+}
+#toolbar:not(:has(input:checked)) ~ #in-out-put textarea {
+  z-index: 1;
+  resize:none;
+}
+label:has(#previewBox:checked):after {
+  content: " edit";
+  color: goldenrod;
+}
+label:has(#previewBox):before {
+  content: "mode edition";
+  pointer-events: none;
+  color: black;
+  position: absolute;
+  z-index: 2;
+  padding: 0.5ch 1ch;
+  bottom: 2rem;
+  right: 0;
+  background: wheat;
+  border: solid 1px;
+  border-radius: 10px 10px 10px 0;
+  box-shadow: -1px -1px 2px;
+  opacity: 0.5;
+}
+label:has(#previewBox:checked):before {
+  content: "mode preview";
+}
+label:has(#previewBox):after {
+  content: " preview";
+  color: white;
+}
+#toolbar:has(input:checked)
+  i[id]:not(#editor-mode, #undo-btn, #redo-btn, #htmlsrc),
+.disabled {
+  pointer-events: none;
+  color: #555;
+}
+i#htmlsrc,
+i#htmlsrc + hr {
+  display: none;
+  color: white;
+  font-weight: 700;
+}
+#toolbar:has(input:checked) #htmlsrc,
+#toolbar:has(input:checked) #htmlsrc + hr {
+  display: block;
+}
+#markdown-content {
+  border: none;
+  resize: none;
+  outline-offset: -2px;
+  overflow: auto;
+  font-family:monospace;
+}
+#markdown-content::placeholder {
+  font-family: courrier;
+  color: #333;
+  font-size: 1.75rem;
+}
+#html-preview:empty::before {
+  content: "Aperçu, \A\A Il n'y a rien à montrer. \AÉditer et commencer à écrire!";
+  display: block;
+  font-family: courrier;
+  color: #3338;
+  font-size: 1.75rem;
+  margin: 2.4em 0 0 2.8em;
+  white-space: preserve;
+}
+
+/*  styles */
+#html-preview {
+  padding: 10pt;
+  height: 100%;
+  z-index:1;
+}
+#html-src {
+  position: absolute;
+  inset: 0;
+  background: white;
+  z-index: 10;
+  overflow: auto;
+}
+#toolbar:not(:has(input:checked)) ~ #in-out-put #html-src,
+#toolbar ~ #in-out-put #html-src.discret {
+  display: none;
+}
+#staticMiniForum:has(.distraction-free)   :target{
+  filter:none!important
+}

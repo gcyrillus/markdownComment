@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<document>
+	<title><![CDATA[markdownComment]]></title>
+	<author><![CDATA[pluxthemes]]></author>
+	<version>2.0.0</version>
+	<date>2024-12-11</date>
+	<site>https://pluxthemes.com</site>
+	<description><![CDATA[Permet d'utiliser la syntaxe MarkDown dans les commentaire en inserant un éditeur. fontawesome et highlightjs sont aussi solicité.
+		toolbar:
+		- undo, redo, erase all
+		- titles 1-6 , hr
+		- bold, italic, strikethrough
+		- link, image
+		- inline code, block code
+		- ul, ol, table
+		- preview
+	[+] loading delayed for onload DOM updates
+	[+] marked.js,  purify.js et highlight.js
+	[+] HTML preview
+	
+	]]></description>
+	<scope></scope>
+	</document>
